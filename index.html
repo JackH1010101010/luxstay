@@ -550,9 +550,9 @@ const MIN_SAVING  = 0.08;  // members always save at least 8% vs Booking.com
 //   3. Account → API Keys → copy Public Key
 // Template variables: {{to_name}} {{to_email}} {{hotel_name}}
 //   {{checkin}} {{checkout}} {{nights}} {{booking_ref}} {{total_price}}
-const EMAILJS_PUBLIC_KEY  = '';  // e.g. 'abc123XYZ'
-const EMAILJS_SERVICE_ID  = '';  // e.g. 'service_gmail'
-const EMAILJS_TEMPLATE_ID = '';  // e.g. 'template_booking'
+const EMAILJS_PUBLIC_KEY  = 'sG-pM-78GQr4Crt0K';  // e.g. 'abc123XYZ'
+const EMAILJS_SERVICE_ID  = 'service_eu4zfle';  // e.g. 'service_gmail'
+const EMAILJS_TEMPLATE_ID = 'template_xklcka7';  // e.g. 'template_booking'
 
 if (EMAILJS_PUBLIC_KEY) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
@@ -1111,7 +1111,7 @@ async function confirmBooking() {
         checkin:     bkSess.checkin,
         checkout:    bkSess.checkout,
         booking_ref: bookingRef,
-      }, EMAILJS_PUBLIC_KEY);
+      });
     } catch(e) { console.warn('Email send failed:', e); }
     setBkStep(4);
 
