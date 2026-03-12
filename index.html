@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LuxStay — Member-Only Luxury Hotel Rates</title>
-  <meta name="google-site-verification" content="w1CNob_6FpyZqs14nLJK6e7Dar14Uo4nfgC6PaRUzCM" />
+  <meta name="google-site-verification" content="VhXv54H1_KHd1v8J3vQU6Z-Ouz-rcG1J7Cm-7pVBjQQ" />
   <meta name="description" content="5-star hotels at member-only rates. Save 10–30% on London, Dubai and Bangkok luxury hotels. No minimum stay. Live pricing." />
 
   <!-- PostHog Analytics — key injected at build time via POSTHOG_PROJECT_KEY env var -->
@@ -539,8 +539,7 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────
-const API_KEY  = 'prod_31e2c9c7-1465-451b-9e81-34f00279a235';
-const API_BASE = 'https://api.liteapi.travel/v3.0';
+const API_BASE = '/.netlify/functions/liteapi'; // server-side proxy — key never in browser
 const MARKUP      = 0.15;  // target markup above net cost
 const MIN_SAVING  = 0.08;  // members always save at least 8% vs Booking.com
 
@@ -604,7 +603,7 @@ async function sendBookingConfirmation(bk) {
 // ── TEST MODE ─────────────────────────────────────────────────
 // Set to true to simulate the full booking flow without real API calls or charges.
 // Set to false for production use.
-const TEST_MODE = true;
+const TEST_MODE = false;
 // memberPrice = min(net × 1.15,  ssp × 0.92)  — whichever is lower
 function calcMemberPrice(netCost, ssp) {
   if (!netCost) return null;
@@ -763,8 +762,8 @@ async function loadHotelPhoto(hotelId) {
     return;
   }
   try {
-    const resp = await fetch(`${API_BASE}/data/hotel?hotelId=${hotelId}`, {
-      headers: { 'X-API-Key': API_KEY, 'accept': 'application/json' }
+    const resp = await fetch(`${API_BASE}?ep=data/hotel&hotelId=${hotelId}`, {
+      headers: { 'accept': 'application/json' }
     });
     if (!resp.ok) return;
     const data = await resp.json();
@@ -788,9 +787,9 @@ async function fetchRate(h, checkin, checkout) {
   }
 
   try {
-    const resp = await fetch(`${API_BASE}/hotels/rates`, {
+    const resp = await fetch(`${API_BASE}?ep=hotels/rates`, {
       method: 'POST',
-      headers: { 'X-API-Key': API_KEY, 'Content-Type': 'application/json', 'accept': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'accept': 'application/json' },
       body: JSON.stringify({
         hotelIds: [h.id],
         occupancies: [{ adults: parseInt(document.getElementById('guests').value) }],
@@ -932,9 +931,9 @@ async function doPrebook() {
   }
   // ── LIVE ───────────────────────────────────────────────────
   try {
-    const resp = await fetch(`${API_BASE}/hotels/prebook`, {
+    const resp = await fetch(`${API_BASE}?ep=hotels/prebook`, {
       method: 'POST',
-      headers: { 'X-API-Key': API_KEY, 'Content-Type': 'application/json', 'accept': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'accept': 'application/json' },
       body: JSON.stringify({ rateId: bkSess.rateId })
     });
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
@@ -1079,9 +1078,9 @@ async function confirmBooking() {
     const { prebookId, holder, transactionId, hotelName, checkin, checkout } = bkSess;
     const adults = parseInt(document.getElementById('guests').value) || 2;
 
-    const resp = await fetch(`${API_BASE}/hotels/book`, {
+    const resp = await fetch(`${API_BASE}?ep=hotels/book`, {
       method: 'POST',
-      headers: { 'X-API-Key': API_KEY, 'Content-Type': 'application/json', 'accept': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'accept': 'application/json' },
       body: JSON.stringify({
         prebookId,
         holder:  { firstName: holder.firstName, lastName: holder.lastName, email: holder.email, phone: holder.phone },
