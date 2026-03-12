@@ -86,7 +86,10 @@
     .hotel-grid{display:flex;flex-direction:column;gap:16px}
     .hotel-card{background:#fff;border-radius:8px;overflow:hidden;display:grid;grid-template-columns:180px 1fr;border:1px solid var(--grey-mid);box-shadow:0 1px 4px rgba(0,0,0,.07);transition:box-shadow .15s}
     .hotel-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
-    .hotel-img{position:relative;background:linear-gradient(135deg,#2a3a5c,#1a2744);display:flex;align-items:center;justify-content:center;font-size:40px;min-height:160px}
+    .hotel-img{position:relative;background:linear-gradient(135deg,#2a3a5c,#1a2744);display:flex;align-items:center;justify-content:center;font-size:40px;min-height:160px;overflow:hidden}
+    .hotel-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}
+    .hotel-img img.loaded{opacity:1}
+    .hotel-img .img-fallback{position:relative;z-index:1;pointer-events:none}
     .hotel-badge{position:absolute;top:10px;left:10px;background:var(--gold);color:var(--navy);font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:.06em}
     .hotel-body{padding:16px 20px;display:flex;flex-direction:column;gap:8px}
     .hotel-name{font-size:17px;font-weight:700;color:var(--navy);line-height:1.25}
@@ -651,16 +654,20 @@ function renderHotels(city, checkin, checkout) {
   document.getElementById('result-count').textContent = `${hotels.length} hotel${hotels.length !== 1 ? 's' : ''}`;
 
   grid.innerHTML = hotels.map(h => buildCard(h)).join('');
-  // Fetch live rates for each
-  hotels.forEach(h => fetchRate(h, checkin, checkout));
+  // Fetch live rates and hotel photos in parallel
+  hotels.forEach(h => {
+    fetchRate(h, checkin, checkout);
+    loadHotelPhoto(h.id);
+  });
 }
 
 // ── BUILD CARD ────────────────────────────────────────────────
 function buildCard(h) {
   return `
   <article class="hotel-card" id="card-${h.id}">
-    <div class="hotel-img">
-      <span>${h.emoji}</span>
+    <div class="hotel-img" id="img-${h.id}">
+      <img id="photo-${h.id}" alt="${h.name}" loading="lazy" />
+      <span class="img-fallback">${h.emoji}</span>
       ${h.badge ? `<span class="hotel-badge">${h.badge}</span>` : ''}
     </div>
     <div class="hotel-body">
@@ -681,6 +688,34 @@ function buildCard(h) {
   </article>`;
 }
 
+// ── LOAD HOTEL PHOTO ──────────────────────────────────────────
+const photoCache = {};
+async function loadHotelPhoto(hotelId) {
+  const imgEl = document.getElementById(`photo-${hotelId}`);
+  if (!imgEl) return;
+  // Check cache first
+  if (photoCache[hotelId]) {
+    imgEl.src = photoCache[hotelId];
+    imgEl.onload = () => imgEl.classList.add('loaded');
+    return;
+  }
+  try {
+    const resp = await fetch(`${API_BASE}/data/hotel?hotelId=${hotelId}`, {
+      headers: { 'X-API-Key': API_KEY, 'accept': 'application/json' }
+    });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const images = data?.data?.hotelImages;
+    // Prefer a room or exterior image, fallback to first available
+    const img = images?.find(i => /room|exterior|lobby/i.test(i.caption || '')) || images?.[0];
+    if (img?.url) {
+      photoCache[hotelId] = img.url;
+      imgEl.src = img.url;
+      imgEl.onload = () => imgEl.classList.add('loaded');
+    }
+  } catch { /* silently ignore — emoji fallback remains visible */ }
+}
+
 // ── FETCH RATE ────────────────────────────────────────────────
 async function fetchRate(h, checkin, checkout) {
   const cacheKey = `${h.id}-${checkin}-${checkout}`;
@@ -698,7 +733,11 @@ async function fetchRate(h, checkin, checkout) {
         occupancies: [{ adults: parseInt(document.getElementById('guests').value) }],
         currency: 'GBP',
         guestNationality: 'GB',
-        checkin, checkout
+        checkin, checkout,
+        // margin tells LiteAPI to add our markup to the rate — the rateId
+        // returned then encodes this price and the payment SDK charges it.
+        // LiteAPI remits the markup to us on weekly payout.
+        margin: Math.round(MARKUP * 100)
       })
     });
 
@@ -740,9 +779,9 @@ function updateCardPrice(h, data) {
   }
 
   const { netCost, ssp } = data;
-  const displaySsp  = ssp || netCost;
-  // Member pays net + markup (capped so they always save vs Booking.com)
-  const memberPrice = calcMemberPrice(netCost, ssp);
+  // netCost already includes our margin (passed to the rates API).
+  // ssp is LiteAPI's suggested selling price == Booking.com reference rate.
+  const memberPrice = netCost;
   const saving      = ssp && memberPrice ? Math.round((1 - memberPrice/ssp)*100) : 0;
   const fmt = n => '£' + parseFloat(n).toLocaleString('en-GB', {minimumFractionDigits:0, maximumFractionDigits:0});
 
@@ -805,9 +844,9 @@ async function bookHotel(id, name) {
   }
 
   bkSess = { hotelId: id, hotelName: name, checkin, checkout, ...rate,
-             memberPrice: calcMemberPrice(rate.netCost, rate.ssp) };
+             memberPrice: rate.netCost };  // netCost already includes margin
   track('booking_started', { hotel_id: id, hotel_name: name, checkin, checkout,
-    member_price: calcMemberPrice(rate.netCost, rate.ssp) });
+    member_price: rate.netCost });
   document.getElementById('bk-title').textContent = name;
   document.getElementById('bk-summary-content').innerHTML =
     '<div class="bk-spinner"><div class="spinner"></div><p>Confirming availability…</p></div>';
@@ -841,9 +880,8 @@ async function doPrebook() {
     if (!pb?.prebookId) throw new Error('No prebookId in response');
 
     bkSess.prebookId      = pb.prebookId;
-    bkSess.confirmedPrice = pb.totalPayable?.amount
-                          ? calcMemberPrice(pb.totalPayable.amount, bkSess.ssp)
-                          : bkSess.memberPrice;
+    // totalPayable.amount is the prebook total at the margin-adjusted rate
+    bkSess.confirmedPrice = pb.totalPayable?.amount || bkSess.memberPrice;
     bkSess.currency       = pb.totalPayable?.currency || 'GBP';
     bkSess.cancelPolicy   = pb.cancellationPolicies?.[0]?.description
                          || (pb.cancellationPolicies?.length ? 'See cancellation terms' : 'Free cancellation');
