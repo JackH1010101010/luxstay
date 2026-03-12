@@ -459,7 +459,7 @@ const MIN_SAVING  = 0.08;  // members always save at least 8% vs Booking.com
 // ── TEST MODE ─────────────────────────────────────────────────
 // Set to true to simulate the full booking flow without real API calls or charges.
 // Set to false for production use.
-const TEST_MODE = true;
+const TEST_MODE = false;
 // memberPrice = min(net × 1.15,  ssp × 0.92)  — whichever is lower
 function calcMemberPrice(netCost, ssp) {
   if (!netCost) return null;
