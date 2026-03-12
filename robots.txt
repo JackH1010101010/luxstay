@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://luxstay.netlify.app/sitemap.xml
