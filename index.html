@@ -818,8 +818,9 @@ async function fetchRate(h, checkin, checkout) {
     const netCost  = rate.total?.[0]?.amount;
     const ssp      = rate.suggestedSellingPrice?.[0]?.amount;
     const rateId   = hotel?.roomTypes?.[0]?.rates?.[0]?.rateId;
+    const offerId  = hotel?.roomTypes?.[0]?.offerId;
     const roomName = hotel?.roomTypes?.[0]?.name || 'Standard Room';
-    const result   = { netCost, ssp, rateId, roomName };
+    const result   = { netCost, ssp, rateId, offerId, roomName };
     ratesCache[cacheKey] = result;
     updateCardPrice(h, result);
 
@@ -901,7 +902,7 @@ async function bookHotel(id, name) {
   const cacheKey = `${id}-${checkin}-${checkout}`;
   const rate     = ratesCache[cacheKey];
 
-  if (!rate?.rateId) {
+  if (!rate?.offerId) {
     alert('Rate data has expired — please search again to refresh prices.');
     return;
   }
@@ -932,13 +933,15 @@ async function doPrebook() {
   }
   // ── LIVE ───────────────────────────────────────────────────
   try {
-    const resp = await fetch(`${API_BASE}?ep=hotels/prebook`, {
+    const resp = await fetch(`${API_BASE}?ep=rates/prebook`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'accept': 'application/json' },
-      body: JSON.stringify({ rateId: bkSess.rateId })
+      body: JSON.stringify({ offerId: bkSess.offerId, usePaymentSdk: true })
     });
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
-    const data = await resp.json();
+    const raw = await resp.text();
+    if (!raw) throw new Error('Empty prebook response');
+    const data = JSON.parse(raw);
     const pb   = data?.data;
     if (!pb?.prebookId) throw new Error('No prebookId in response');
 
@@ -1079,14 +1082,14 @@ async function confirmBooking() {
     const { prebookId, holder, transactionId, hotelName, checkin, checkout } = bkSess;
     const adults = parseInt(document.getElementById('guests').value) || 2;
 
-    const resp = await fetch(`${API_BASE}?ep=hotels/book`, {
+    const resp = await fetch(`${API_BASE}?ep=rates/book`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'accept': 'application/json' },
       body: JSON.stringify({
         prebookId,
         holder:  { firstName: holder.firstName, lastName: holder.lastName, email: holder.email, phone: holder.phone },
         guests:  [{ occupancy: { adults }, firstName: holder.firstName, lastName: holder.lastName }],
-        payment: { method: 'CREDIT_CARD', transactionId }
+        payment: { method: 'TRANSACTION_ID', transactionId }
       })
     });
     if (!resp.ok) throw new Error(`Status ${resp.status}`);

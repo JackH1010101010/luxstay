@@ -6,8 +6,8 @@
  * Netlify site settings (deploy-all.js sets it automatically).
  *
  * Accepts:  POST /.netlify/functions/liteapi?ep=hotels/rates
- *           POST /.netlify/functions/liteapi?ep=hotels/prebook
- *           POST /.netlify/functions/liteapi?ep=hotels/book
+ *           POST /.netlify/functions/liteapi?ep=rates/prebook
+ *           POST /.netlify/functions/liteapi?ep=rates/book
  *           POST /.netlify/functions/liteapi?ep=hotels/cancel
  *            GET /.netlify/functions/liteapi?ep=data/hotel&hotelId=xxx
  *
@@ -19,8 +19,8 @@ const LITEAPI_BASE = 'https://api.liteapi.travel/v3.0';
 // Allowlist — only forward requests to these endpoints
 const ALLOWED_ENDPOINTS = new Set([
   'hotels/rates',
-  'hotels/prebook',
-  'hotels/book',
+  'rates/prebook',
+  'rates/book',
   'hotels/cancel',
   'data/hotel',   // hotel photos / details (GET)
 ]);
