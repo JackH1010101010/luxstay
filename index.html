@@ -90,6 +90,7 @@
     .hotel-grid{display:flex;flex-direction:column;gap:16px}
     .hotel-card{background:#fff;border-radius:8px;overflow:hidden;display:grid;grid-template-columns:180px 1fr;border:1px solid var(--grey-mid);box-shadow:0 1px 4px rgba(0,0,0,.07);transition:box-shadow .15s}
     .hotel-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
+    .hotel-card.unavailable{opacity:.45;order:99}
     .hotel-img{position:relative;background:linear-gradient(135deg,#2a3a5c,#1a2744);display:flex;align-items:center;justify-content:center;font-size:40px;min-height:160px;overflow:hidden}
     .hotel-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}
     .hotel-img img.loaded{opacity:1}
@@ -836,10 +837,15 @@ function updateCardPrice(h, data) {
   if (!priceEl) return;
 
   if (!data || data.error) {
-    priceEl.innerHTML = `<span class="rate-loading">${data?.error?.includes('No rooms') ? 'No availability' : 'Unavailable'}</span>`;
+    priceEl.innerHTML = `<span class="rate-loading">No availability for these dates</span>`;
     btnEl.innerHTML = '';
+    const card = document.getElementById(`card-${h.id}`);
+    if (card) card.classList.add('unavailable');
     return;
   }
+
+  const card = document.getElementById(`card-${h.id}`);
+  if (card) card.classList.remove('unavailable');
 
   const { netCost, ssp } = data;
   // netCost already includes our margin (passed to the rates API).
