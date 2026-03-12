@@ -1,0 +1,53 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Inject PostHog key
+        env:
+          POSTHOG_PROJECT_KEY: ${{ secrets.POSTHOG_PROJECT_KEY }}
+        run: |
+          if [ -n "$POSTHOG_PROJECT_KEY" ]; then
+            sed -i "s/YOUR_POSTHOG_KEY/${POSTHOG_PROJECT_KEY}/g" index.html
+            echo "✓ PostHog key injected"
+          else
+            echo "⚠ POSTHOG_PROJECT_KEY not set — skipping"
+          fi
+
+      - name: Set LITEAPI_KEY env var on Netlify site
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          LITEAPI_KEY: ${{ secrets.LITEAPI_KEY }}
+          SITE_ID: 5936d2df-a89d-4554-a5eb-1a87078450fe
+        run: |
+          if [ -n "$LITEAPI_KEY" ]; then
+            curl -s -X POST \
+              "https://api.netlify.com/api/v1/sites/${SITE_ID}/env" \
+              -H "Authorization: Bearer ${NETLIFY_AUTH_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d "[{\"key\":\"LITEAPI_KEY\",\"values\":[{\"value\":\"${LITEAPI_KEY}\",\"context\":\"all\"}]}]"
+            echo "✓ LITEAPI_KEY set on Netlify site"
+          else
+            echo "⚠ LITEAPI_KEY not set"
+          fi
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          netlify deploy \
+            --dir=. \
+            --prod \
+            --site=5936d2df-a89d-4554-a5eb-1a87078450fe \
+            --auth=$NETLIFY_AUTH_TOKEN
