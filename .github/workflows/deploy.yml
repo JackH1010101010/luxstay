@@ -28,12 +28,11 @@ jobs:
       - name: Set LITEAPI_KEY env var on Netlify site
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: 5936d2df-a89d-4554-a5eb-1a87078450fe
           LITEAPI_KEY: ${{ secrets.LITEAPI_KEY }}
-          SITE_ID: 5936d2df-a89d-4554-a5eb-1a87078450fe
         run: |
           if [ -n "$LITEAPI_KEY" ]; then
             netlify env:set LITEAPI_KEY "$LITEAPI_KEY" \
-              --site="$SITE_ID" \
               --context production \
               --auth="$NETLIFY_AUTH_TOKEN"
             echo "✓ LITEAPI_KEY set on Netlify site"
