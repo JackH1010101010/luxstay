@@ -63,6 +63,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: 5936d2df-a89d-4554-a5eb-1a87078450fe
           LITEAPI_KEY: ${{ secrets.LITEAPI_KEY }}
+        working-directory: luxstay
         run: |
           if [ -n "$LITEAPI_KEY" ]; then
             netlify env:set LITEAPI_KEY "$LITEAPI_KEY" \
@@ -76,9 +77,12 @@ jobs:
       - name: Deploy to Netlify
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        # Must run from inside luxstay/ so netlify.toml is at CWD —
+        # that's how Netlify CLI finds the functions directory.
+        working-directory: luxstay
         run: |
           netlify deploy \
-            --dir=luxstay \
+            --dir=. \
             --prod \
             --site=5936d2df-a89d-4554-a5eb-1a87078450fe \
             --auth=$NETLIFY_AUTH_TOKEN
