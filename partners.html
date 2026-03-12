@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Refer & Earn — LuxStay Partner Programme</title>
+<meta name="description" content="Earn £25–£150 per booking by referring friends and clients to LuxStay. Get your unique referral link and track earnings. No minimums, no cap.">
+<!-- PostHog -->
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+" (stub)"},o="init capture alias identify people.set people.set_once set register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId setPersonPropertiesForFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('YOUR_POSTHOG_KEY', {api_host:'https://us.i.posthog.com', person_profiles:'identified_only'});
+</script>
+<style>
+  :root {
+    --navy:#1a2744;--gold:#c9a84c;--gold-lt:#f5e9c8;
+    --grey-bg:#f7f7f5;--grey-mid:#e5e3de;--grey-text:#6b6b6b;
+    --black:#1a1a1a;--white:#fff;
+    --green:#1a7a3c;--green-lt:#e8f5ee;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--grey-bg);color:var(--black);line-height:1.5}
+
+  /* Nav */
+  nav{background:var(--navy);padding:14px 24px;display:flex;align-items:center;gap:20px}
+  .logo{font-size:20px;font-weight:700;color:var(--gold);letter-spacing:.04em;text-decoration:none}
+  .nav-link{color:rgba(255,255,255,.7);font-size:14px;text-decoration:none}
+  .nav-link:hover{color:#fff}
+
+  /* Hero */
+  .hero{background:var(--navy);padding:64px 24px 56px;text-align:center}
+  .hero-eyebrow{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
+  .hero h1{font-size:clamp(26px,4vw,44px);font-weight:700;color:#fff;line-height:1.2;max-width:640px;margin:0 auto 16px}
+  .hero-sub{color:rgba(255,255,255,.65);font-size:17px;max-width:520px;margin:0 auto 32px}
+  .hero-stat-row{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+  .hero-stat{text-align:center}
+  .hero-stat .num{font-size:32px;font-weight:700;color:var(--gold)}
+  .hero-stat .lbl{font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase}
+
+  /* Container */
+  .container{max-width:860px;margin:0 auto;padding:0 20px}
+
+  /* How it works */
+  .section{padding:56px 24px}
+  .section-title{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:8px;text-align:center}
+  .section-sub{font-size:15px;color:var(--grey-text);text-align:center;margin-bottom:40px}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;max-width:860px;margin:0 auto}
+  .step{background:#fff;border-radius:10px;padding:28px 24px;border:1px solid var(--grey-mid);text-align:center}
+  .step-num{width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+  .step h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px}
+  .step p{font-size:14px;color:var(--grey-text);line-height:1.5}
+
+  /* Earnings table */
+  .earn-section{background:#fff;border-top:1px solid var(--grey-mid);border-bottom:1px solid var(--grey-mid);padding:56px 24px}
+  .earn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;max-width:860px;margin:0 auto 32px}
+  .earn-card{background:var(--grey-bg);border-radius:8px;padding:20px;border:1px solid var(--grey-mid);text-align:center}
+  .earn-card.highlight{background:var(--navy);border-color:var(--navy)}
+  .earn-booking{font-size:26px;font-weight:700;color:var(--navy)}
+  .earn-card.highlight .earn-booking{color:var(--gold)}
+  .earn-label{font-size:12px;color:var(--grey-text);margin-top:4px}
+  .earn-card.highlight .earn-label{color:rgba(255,255,255,.6)}
+  .earn-example{font-size:11px;color:var(--grey-text);margin-top:6px;font-style:italic}
+  .earn-card.highlight .earn-example{color:rgba(255,255,255,.45)}
+  .earn-note{font-size:13px;color:var(--grey-text);text-align:center;max-width:580px;margin:0 auto}
+
+  /* Generator */
+  .gen-section{padding:56px 24px;background:var(--grey-bg)}
+  .gen-box{background:#fff;border:1px solid var(--grey-mid);border-radius:12px;padding:36px;max-width:580px;margin:0 auto}
+  .gen-box h2{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:6px}
+  .gen-box .sub{font-size:14px;color:var(--grey-text);margin-bottom:24px}
+  .form-row{margin-bottom:16px}
+  .form-row label{display:block;font-size:12px;font-weight:600;color:var(--grey-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+  .form-row input{width:100%;border:1px solid var(--grey-mid);border-radius:6px;padding:10px 12px;font-size:14px;color:var(--black);outline:none}
+  .form-row input:focus{border-color:var(--navy)}
+  .btn-gen{width:100%;background:var(--navy);color:#fff;font-size:15px;font-weight:600;padding:13px;border-radius:6px;border:none;cursor:pointer;margin-top:4px}
+  .btn-gen:hover{background:#253259}
+
+  /* Link output */
+  #link-output{display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--grey-mid)}
+  .link-label{font-size:12px;font-weight:600;color:var(--grey-text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+  .link-box{display:flex;gap:8px;align-items:stretch}
+  .link-url{flex:1;background:var(--grey-bg);border:1px solid var(--grey-mid);border-radius:6px;padding:10px 12px;font-size:13px;color:var(--black);font-family:monospace;word-break:break-all;line-height:1.4}
+  .btn-copy{background:var(--gold);color:var(--navy);font-size:13px;font-weight:700;padding:10px 16px;border-radius:6px;border:none;cursor:pointer;white-space:nowrap}
+  .btn-copy:hover{background:#b8953e}
+  .copy-confirm{display:none;font-size:13px;color:var(--green);margin-top:8px;font-weight:600}
+  .link-hint{font-size:13px;color:var(--grey-text);margin-top:12px;line-height:1.5}
+
+  /* Payout info */
+  .payout-section{padding:56px 24px}
+  .payout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;max-width:860px;margin:0 auto}
+  .payout-card{background:#fff;border-radius:10px;padding:24px;border:1px solid var(--grey-mid)}
+  .payout-icon{font-size:28px;margin-bottom:12px}
+  .payout-card h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px}
+  .payout-card p{font-size:14px;color:var(--grey-text);line-height:1.5}
+
+  /* FAQ */
+  .faq-section{background:#fff;border-top:1px solid var(--grey-mid);padding:56px 24px}
+  .faq-list{max-width:680px;margin:0 auto}
+  .faq-item{border-bottom:1px solid var(--grey-mid);padding:20px 0}
+  .faq-item:last-child{border-bottom:none}
+  .faq-q{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+  .faq-q::after{content:"＋";font-size:18px;color:var(--gold);font-weight:400}
+  .faq-item.open .faq-q::after{content:"−"}
+  .faq-a{font-size:14px;color:var(--grey-text);line-height:1.6;display:none}
+  .faq-item.open .faq-a{display:block}
+
+  /* CTA footer */
+  .cta-bar{background:var(--navy);padding:48px 24px;text-align:center}
+  .cta-bar h2{font-size:22px;font-weight:700;color:#fff;margin-bottom:10px}
+  .cta-bar p{font-size:15px;color:rgba(255,255,255,.6);margin-bottom:24px}
+  .btn-cta{display:inline-block;background:var(--gold);color:var(--navy);font-size:15px;font-weight:700;padding:13px 32px;border-radius:6px;text-decoration:none}
+  .btn-cta:hover{background:#b8953e}
+
+  footer{background:#111;padding:20px 24px;text-align:center;font-size:12px;color:#555}
+  footer a{color:#888;text-decoration:none}
+  footer a:hover{color:#aaa}
+
+  @media(max-width:600px){
+    .hero{padding:40px 20px 36px}
+    .hero-stat-row{gap:20px}
+    .section,.earn-section,.gen-section,.payout-section,.faq-section{padding:40px 20px}
+    .gen-box{padding:24px 20px}
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a class="logo" href="/">✦ LuxStay</a>
+  <a class="nav-link" href="/" style="margin-left:auto">← Browse Hotels</a>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-eyebrow">Partner Programme</div>
+  <h1>Refer friends. Earn on every booking.</h1>
+  <p class="hero-sub">Share your unique link. When someone books through LuxStay, you earn a commission — no minimums, no cap, paid monthly.</p>
+  <div class="hero-stat-row">
+    <div class="hero-stat">
+      <div class="num">5%</div>
+      <div class="lbl">of booking value</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">£25+</div>
+      <div class="lbl">per booking average</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">30 day</div>
+      <div class="lbl">cookie window</div>
+    </div>
+  </div>
+</div>
+
+<!-- How it works -->
+<div class="section">
+  <div class="container">
+    <div class="section-title">How it works</div>
+    <div class="section-sub">Three steps, no tech setup required</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Get your link</h3>
+        <p>Enter your name and email below. We generate a unique referral link tied to your account instantly.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Share it</h3>
+        <p>Post it anywhere — Instagram, WhatsApp, a travel blog, a client email. Anyone who clicks it is tracked for 30 days.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Earn commission</h3>
+        <p>When your referral completes a booking, you earn 5% of the total booking value. Paid monthly via bank transfer.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Earnings table -->
+<div class="earn-section">
+  <div class="container">
+    <div class="section-title">What you can earn</div>
+    <div class="section-sub">Commission is 5% of booking value — higher booking values, higher commission</div>
+    <div class="earn-grid">
+      <div class="earn-card">
+        <div class="earn-booking">£25</div>
+        <div class="earn-label">per booking</div>
+        <div class="earn-example">e.g. £500 city break</div>
+      </div>
+      <div class="earn-card highlight">
+        <div class="earn-booking">£75</div>
+        <div class="earn-label">per booking</div>
+        <div class="earn-example">e.g. £1,500 Dubai villa</div>
+      </div>
+      <div class="earn-card">
+        <div class="earn-booking">£150</div>
+        <div class="earn-label">per booking</div>
+        <div class="earn-example">e.g. £3,000 Maldives resort</div>
+      </div>
+      <div class="earn-card">
+        <div class="earn-booking">No cap</div>
+        <div class="earn-label">on referrals</div>
+        <div class="earn-example">Refer 10 people, earn 10×</div>
+      </div>
+    </div>
+    <p class="earn-note">Commission is calculated on the total booking amount charged at checkout. Earnings are reconciled monthly and paid the following month.</p>
+  </div>
+</div>
+
+<!-- Link generator -->
+<div class="gen-section">
+  <div class="container">
+    <div class="section-title">Get your referral link</div>
+    <div class="section-sub">Takes 10 seconds — no account needed</div>
+    <div class="gen-box">
+      <h2>Generate your link</h2>
+      <p class="sub">Enter your details and we'll create a unique tracking link for you.</p>
+      <div class="form-row">
+        <label for="ref-name">Your name</label>
+        <input type="text" id="ref-name" placeholder="e.g. Sarah M." autocomplete="name">
+      </div>
+      <div class="form-row">
+        <label for="ref-email">Email address</label>
+        <input type="email" id="ref-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <button class="btn-gen" onclick="generateLink()">Generate my referral link →</button>
+      <div id="link-output">
+        <div class="link-label">Your referral link</div>
+        <div class="link-box">
+          <div class="link-url" id="link-url-text">—</div>
+          <button class="btn-copy" onclick="copyLink()">Copy</button>
+        </div>
+        <div class="copy-confirm" id="copy-confirm">✓ Copied to clipboard</div>
+        <div class="link-hint">
+          Share this link anywhere. Anyone who clicks it and completes a booking within 30 days earns you 5% commission.<br><br>
+          <strong>Save this link</strong> — we'll also email it to you so you never lose it.
+        </div>
+      </div>
+      <div id="gen-error" style="display:none;margin-top:12px;font-size:13px;color:#b91c1c;font-weight:600"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Payout info -->
+<div class="payout-section">
+  <div class="container">
+    <div class="section-title">Payout details</div>
+    <div class="section-sub">Transparent, reliable, no surprises</div>
+    <div class="payout-grid">
+      <div class="payout-card">
+        <div class="payout-icon">📅</div>
+        <h3>Monthly payouts</h3>
+        <p>Earnings from completed bookings in month M are paid out in month M+1. We reconcile on the 1st and pay within 5 business days.</p>
+      </div>
+      <div class="payout-card">
+        <div class="payout-icon">💷</div>
+        <h3>Bank transfer</h3>
+        <p>Paid via UK bank transfer (BACS) or international SWIFT. No PayPal fees, no platform cuts beyond what's stated.</p>
+      </div>
+      <div class="payout-card">
+        <div class="payout-icon">📊</div>
+        <h3>Transparent tracking</h3>
+        <p>Every booking attributed to your link is visible in our PostHog analytics. We share a monthly statement with full booking detail.</p>
+      </div>
+      <div class="payout-card">
+        <div class="payout-icon">🔒</div>
+        <h3>30-day cookie</h3>
+        <p>If someone clicks your link today and books any time in the next 30 days, the commission is yours — even if they search again.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="container">
+    <div class="section-title">FAQ</div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Do I need to be a LuxStay member to refer?</div>
+        <div class="faq-a">No. Anyone can become a partner and share a referral link. You don't need to have booked with LuxStay yourself, though trying the product makes for more authentic recommendations.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is there a minimum payout threshold?</div>
+        <div class="faq-a">There's no minimum threshold. If you've generated £1 in commission, it will be paid out in your next monthly statement. We believe in paying what's owed without gatekeeping.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What happens if a booking is cancelled?</div>
+        <div class="faq-a">Commission is earned on completed, non-cancelled bookings. If a referral cancels their booking before their stay, the corresponding commission is reversed. Cancellations after the stay commences are not reversed.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I share my link on social media or a blog?</div>
+        <div class="faq-a">Yes — that's exactly what it's designed for. Travel bloggers, Instagram accounts, YouTube channels, WhatsApp groups, newsletters — all of it works. If you drive volume, get in touch for a custom rate.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How do I know my referrals are being tracked?</div>
+        <div class="faq-a">Every click and booking is tracked via a unique identifier in your link. We send a monthly statement itemising every booking by date, hotel, value, and commission. If you ever question a figure, email us and we'll share the raw data.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What if I want to refer business clients or corporate bookers?</div>
+        <div class="faq-a">Corporate bookings tend to be higher-value, which means higher commissions per booking. Get in touch at <a href="mailto:jackthughes99@gmail.com">jackthughes99@gmail.com</a> and we can discuss a tailored arrangement for B2B referrals.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA bar -->
+<div class="cta-bar">
+  <h2>Ready to start earning?</h2>
+  <p>Generate your link above and share it today. Your first commission could arrive within the month.</p>
+  <a class="btn-cta" href="#" onclick="document.getElementById('ref-name').focus();return false;">Get my referral link</a>
+</div>
+
+<footer>
+  <p>© 2025 LuxStay · <a href="/">Browse Hotels</a> · <a href="mailto:jackthughes99@gmail.com">Partner Support</a></p>
+</footer>
+
+<script>
+// ── Referral link generator ─────────────────────────────────────
+function generateLink() {
+  const name  = document.getElementById('ref-name').value.trim();
+  const email = document.getElementById('ref-email').value.trim();
+  const errEl = document.getElementById('gen-error');
+
+  errEl.style.display = 'none';
+
+  if (!name) { showErr('Please enter your name.'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showErr('Please enter a valid email address.'); return;
+  }
+
+  // Generate a stable short code from name+email
+  const code = slugify(name) + '-' + shortHash(email);
+  const link = `https://luxstay.netlify.app/?ref=${code}`;
+
+  document.getElementById('link-url-text').textContent = link;
+  document.getElementById('link-output').style.display  = 'block';
+  document.getElementById('copy-confirm').style.display = 'none';
+
+  // Track in PostHog
+  if (window.posthog) {
+    posthog.identify(email, { name });
+    posthog.capture('partner_link_generated', { ref_code: code, partner_name: name, partner_email: email });
+  }
+
+  // Scroll to output
+  document.getElementById('link-output').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function showErr(msg) {
+  const el = document.getElementById('gen-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function copyLink() {
+  const text = document.getElementById('link-url-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('copy-confirm').style.display = 'block';
+    setTimeout(() => { document.getElementById('copy-confirm').style.display = 'none'; }, 2500);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    document.getElementById('copy-confirm').style.display = 'block';
+    setTimeout(() => { document.getElementById('copy-confirm').style.display = 'none'; }, 2500);
+  });
+  if (window.posthog) posthog.capture('partner_link_copied');
+}
+
+function slugify(s) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 20);
+}
+
+function shortHash(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  return Math.abs(h).toString(36).slice(0, 6);
+}
+
+// ── FAQ accordion ───────────────────────────────────────────────
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// ── Track page view ─────────────────────────────────────────────
+if (window.posthog) posthog.capture('$pageview', { page: 'partners' });
+</script>
+</body>
+</html>

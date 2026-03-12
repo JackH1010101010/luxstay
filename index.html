@@ -12,6 +12,9 @@
     posthog.init('YOUR_POSTHOG_KEY', {api_host:'https://us.i.posthog.com', person_profiles:'identified_only'});
   </script>
 
+  <!-- EmailJS — booking confirmation emails to guests -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -237,6 +240,7 @@
   <a href="/" class="logo">LuxStay</a>
   <div class="nav-right">
     <span id="member-nav">✓ Member</span>
+    <a class="nav-link" href="/partners.html">Earn £25/booking →</a>
     <span class="nav-link" onclick="openModal()">How it works</span>
     <button class="btn-join-nav" id="nav-join-btn" onclick="openModal()">Join free</button>
   </div>
@@ -538,6 +542,64 @@ const API_KEY  = 'prod_31e2c9c7-1465-451b-9e81-34f00279a235';
 const API_BASE = 'https://api.liteapi.travel/v3.0';
 const MARKUP      = 0.15;  // target markup above net cost
 const MIN_SAVING  = 0.08;  // members always save at least 8% vs Booking.com
+
+// ── EmailJS — booking confirmation emails ─────────────────────
+// Setup (5 min): https://www.emailjs.com/
+//   1. Create free account → Email Services → Add Gmail/Outlook
+//   2. Email Templates → New Template — use variables below
+//   3. Account → API Keys → copy Public Key
+// Template variables: {{to_name}} {{to_email}} {{hotel_name}}
+//   {{checkin}} {{checkout}} {{nights}} {{booking_ref}} {{total_price}}
+const EMAILJS_PUBLIC_KEY  = '';  // e.g. 'abc123XYZ'
+const EMAILJS_SERVICE_ID  = '';  // e.g. 'service_gmail'
+const EMAILJS_TEMPLATE_ID = '';  // e.g. 'template_booking'
+
+if (EMAILJS_PUBLIC_KEY) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+// ── Referral attribution ────────────────────────────────────────
+// Capture ?ref= from URL and persist for 30 days in sessionStorage + cookie
+(function captureReferral() {
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (ref) {
+    sessionStorage.setItem('ls_ref', ref);
+    // 30-day cookie as belt-and-braces
+    const exp = new Date(Date.now() + 30 * 864e5).toUTCString();
+    document.cookie = `ls_ref=${encodeURIComponent(ref)};expires=${exp};path=/;SameSite=Lax`;
+    if (window.posthog) posthog.register({ referral_code: ref });
+  }
+})();
+
+function getReferralCode() {
+  const ss = sessionStorage.getItem('ls_ref');
+  if (ss) return ss;
+  const m = document.cookie.match(/(?:^|;\s*)ls_ref=([^;]+)/);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+async function sendBookingConfirmation(bk) {
+  if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) return;
+  const nights = bk.checkin && bk.checkout
+    ? Math.max(1, Math.round((new Date(bk.checkout) - new Date(bk.checkin)) / 86400000))
+    : 1;
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_name:     bk.firstName,
+      to_email:    bk.email,
+      hotel_name:  bk.hotelName,
+      checkin:     bk.checkin,
+      checkout:    bk.checkout,
+      nights:      nights,
+      booking_ref: bk.ref,
+      total_price: '£' + parseFloat(bk.price).toLocaleString('en-GB', {minimumFractionDigits: 0}),
+      support_email: 'jackthughes99@gmail.com'
+    });
+    console.log('Confirmation email sent to', bk.email);
+  } catch (e) {
+    // Email failure is non-fatal — booking is confirmed regardless
+    console.warn('Email confirmation failed (non-fatal):', e?.text || e);
+  }
+}
 // ── TEST MODE ─────────────────────────────────────────────────
 // Set to true to simulate the full booking flow without real API calls or charges.
 // Set to false for production use.
@@ -1036,8 +1098,20 @@ async function confirmBooking() {
       `<p><strong>${hotelName}</strong></p>
        <p>Check-in: ${checkin} · Check-out: ${checkout}</p>
        <p>Confirmation sent to: ${holder.email}</p>`;
+    const refCode = getReferralCode();
     track('booking_completed', { hotel_name: hotelName, checkin, checkout,
-      booking_ref: bookingRef, revenue: bkSess.confirmedPrice, currency: bkSess.currency });
+      booking_ref: bookingRef, revenue: bkSess.confirmedPrice, currency: bkSess.currency,
+      ...(refCode ? { referral_code: refCode, commission_gbp: Math.round(parseFloat(bkSess.confirmedPrice) * 0.05 * 100) / 100 } : {}) });
+    // Send confirmation email to guest (non-blocking)
+    sendBookingConfirmation({
+      firstName: holder.firstName,
+      email:     holder.email,
+      hotelName,
+      checkin,
+      checkout,
+      ref:   bookingRef,
+      price: bkSess.confirmedPrice
+    });
     setBkStep(4);
 
   } catch(err) {
