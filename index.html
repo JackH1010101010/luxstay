@@ -1102,16 +1102,17 @@ async function confirmBooking() {
     track('booking_completed', { hotel_name: hotelName, checkin, checkout,
       booking_ref: bookingRef, revenue: bkSess.confirmedPrice, currency: bkSess.currency,
       ...(refCode ? { referral_code: refCode, commission_gbp: Math.round(parseFloat(bkSess.confirmedPrice) * 0.05 * 100) / 100 } : {}) });
-    // Send confirmation email to guest (non-blocking)
-    sendBookingConfirmation({
-      firstName: holder.firstName,
-      email:     holder.email,
-      hotelName,
-      checkin,
-      checkout,
-      ref:   bookingRef,
-      price: bkSess.confirmedPrice
-    });
+    // Send booking confirmation email
+    try {
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_name:     bkSess.holder.firstName,
+        to_email:    bkSess.holder.email,
+        hotel_name:  bkSess.hotelName,
+        checkin:     bkSess.checkin,
+        checkout:    bkSess.checkout,
+        booking_ref: bookingRef,
+      }, EMAILJS_PUBLIC_KEY);
+    } catch(e) { console.warn('Email send failed:', e); }
     setBkStep(4);
 
   } catch(err) {
