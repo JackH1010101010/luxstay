@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  command = ""
+  command = "sed -i \"s/YOUR_POSTHOG_KEY/${POSTHOG_PROJECT_KEY}/g\" index.html"
 
 [build.environment]
   NODE_VERSION = "18"

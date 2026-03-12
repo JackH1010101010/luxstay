@@ -6,6 +6,12 @@
   <title>LuxStay — Member-Only Luxury Hotel Rates</title>
   <meta name="description" content="5-star hotels at member-only rates. Save 10–30% on London, Dubai and Bangkok luxury hotels. No minimum stay. Live pricing." />
 
+  <!-- PostHog Analytics — key injected at build time via POSTHOG_PROJECT_KEY env var -->
+  <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+" (stub)"},o="init capture alias identify people.set people.set_once set register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId setPersonPropertiesForFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('YOUR_POSTHOG_KEY', {api_host:'https://us.i.posthog.com', person_profiles:'identified_only'});
+  </script>
+
   <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -147,6 +153,25 @@
     .modal-success .tick{font-size:48px;margin-bottom:12px}
     .modal-success h3{font-size:20px;font-weight:700;color:var(--green);margin-bottom:8px}
     .modal-success p{font-size:14px;color:var(--grey-text);line-height:1.6}
+
+    /* COOKIE BANNER */
+    #cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:9999;flex-wrap:wrap;font-size:13px;box-shadow:0 -4px 16px rgba(0,0,0,.25)}
+    #cookie-banner p{flex:1;min-width:220px;line-height:1.5}
+    #cookie-banner a{color:var(--gold);text-decoration:underline;cursor:pointer}
+    .cookie-btns{display:flex;gap:8px;flex-shrink:0}
+    .btn-cookie-accept{background:var(--gold);color:var(--navy);border:none;padding:8px 18px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer}
+    .btn-cookie-decline{background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:4px;font-size:13px;cursor:pointer}
+
+    /* PRIVACY MODAL */
+    #privacy-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;overflow-y:auto;padding:40px 16px}
+    #privacy-overlay.open{display:block}
+    .privacy-box{background:#fff;border-radius:10px;max-width:680px;margin:0 auto;padding:32px;position:relative}
+    .privacy-box h2{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:4px}
+    .privacy-box .pp-date{font-size:12px;color:var(--grey-text);margin-bottom:20px}
+    .privacy-box h3{font-size:15px;font-weight:600;color:var(--navy);margin:20px 0 6px}
+    .privacy-box p,.privacy-box li{font-size:14px;color:#333;line-height:1.7}
+    .privacy-box ul{padding-left:20px;margin-top:4px}
+    .privacy-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--grey-text)}
 
     footer{background:var(--navy);color:rgba(255,255,255,.5);text-align:center;padding:24px;font-size:13px}
     footer p+p{margin-top:6px}
@@ -340,7 +365,61 @@
 <footer>
   <p>© 2026 LuxStay · Member-only luxury hotel rates</p>
   <p style="font-size:11px">Rates sourced via live hotel API · Member prices visible to logged-in members only · SSP prices shown to non-members</p>
+  <p style="margin-top:10px">
+    <a href="#" onclick="openPrivacy();return false;" style="color:rgba(255,255,255,.45);font-size:12px;text-decoration:underline">Privacy Policy</a>
+    &nbsp;·&nbsp;
+    <a href="#" onclick="openPrivacy();return false;" style="color:rgba(255,255,255,.45);font-size:12px;text-decoration:underline">Cookie Policy</a>
+  </p>
 </footer>
+
+<!-- COOKIE CONSENT BANNER -->
+<div id="cookie-banner" style="display:none">
+  <p>We use analytics cookies to understand how you use LuxStay and improve your experience. <a onclick="openPrivacy()">Learn more</a>.</p>
+  <div class="cookie-btns">
+    <button class="btn-cookie-decline" onclick="cookieChoice(false)">Decline</button>
+    <button class="btn-cookie-accept" onclick="cookieChoice(true)">Accept</button>
+  </div>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div id="privacy-overlay" onclick="closePrivacyOutside(event)">
+  <div class="privacy-box">
+    <button class="privacy-close" onclick="closePrivacy()">✕</button>
+    <h2>Privacy &amp; Cookie Policy</h2>
+    <p class="pp-date">Last updated: March 2026</p>
+
+    <h3>Who we are</h3>
+    <p>LuxStay is a member-only hotel rate platform operated as a personal project. Contact: <a href="mailto:jackthughes99@gmail.com">jackthughes99@gmail.com</a></p>
+
+    <h3>What data we collect</h3>
+    <ul>
+      <li><strong>Account data:</strong> email address and name when you join (via Google Sign-In or email form). Used only to gate member rates.</li>
+      <li><strong>Analytics data (with consent):</strong> pages visited, searches performed, hotels viewed, booking funnel steps. Collected via PostHog. No personally identifiable data is sent to PostHog — events are anonymous.</li>
+      <li><strong>Booking data:</strong> guest name, email and dates passed to LiteAPI to complete a hotel booking. We do not store payment card details — payments are handled by Stripe.</li>
+    </ul>
+
+    <h3>Cookies</h3>
+    <p>We use two types of cookies:</p>
+    <ul>
+      <li><strong>Essential:</strong> <code>luxstay_member</code> and <code>luxstay_email</code> — stored in localStorage to remember your login. These cannot be declined without breaking the site.</li>
+      <li><strong>Analytics (optional):</strong> PostHog session cookies to measure feature usage. Only set if you click "Accept" on the cookie banner.</li>
+    </ul>
+
+    <h3>Your rights</h3>
+    <p>Under UK GDPR you have the right to access, correct or delete your data. Email us to request deletion of your account. You can withdraw analytics consent at any time by clearing your browser cookies.</p>
+
+    <h3>Third parties</h3>
+    <ul>
+      <li><strong>LiteAPI</strong> — hotel inventory and booking API (liteapi.travel)</li>
+      <li><strong>Google Identity Services</strong> — optional OAuth login</li>
+      <li><strong>PostHog</strong> — anonymous analytics (posthog.com) — only active with your consent</li>
+      <li><strong>Stripe</strong> — payment processing (stripe.com)</li>
+    </ul>
+
+    <h3>Data retention</h3>
+    <p>Analytics data is retained for 12 months. Account data is retained until you request deletion.</p>
+  </div>
+</div>
 
 <!-- JOIN MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
@@ -727,6 +806,8 @@ async function bookHotel(id, name) {
 
   bkSess = { hotelId: id, hotelName: name, checkin, checkout, ...rate,
              memberPrice: calcMemberPrice(rate.netCost, rate.ssp) };
+  track('booking_started', { hotel_id: id, hotel_name: name, checkin, checkout,
+    member_price: calcMemberPrice(rate.netCost, rate.ssp) });
   document.getElementById('bk-title').textContent = name;
   document.getElementById('bk-summary-content').innerHTML =
     '<div class="bk-spinner"><div class="spinner"></div><p>Confirming availability…</p></div>';
@@ -911,11 +992,14 @@ async function confirmBooking() {
     const data    = await resp.json();
     const booking = data?.data;
 
-    document.getElementById('bk-ref-id').textContent = booking?.bookingId || booking?.id || prebookId;
+    const bookingRef = booking?.bookingId || booking?.id || prebookId;
+    document.getElementById('bk-ref-id').textContent = bookingRef;
     document.getElementById('bk-confirm-det').innerHTML =
       `<p><strong>${hotelName}</strong></p>
        <p>Check-in: ${checkin} · Check-out: ${checkout}</p>
        <p>Confirmation sent to: ${holder.email}</p>`;
+    track('booking_completed', { hotel_name: hotelName, checkin, checkout,
+      booking_ref: bookingRef, revenue: bkSess.confirmedPrice, currency: bkSess.currency });
     setBkStep(4);
 
   } catch(err) {
@@ -966,6 +1050,8 @@ function activateMember(email, name) {
   localStorage.setItem('luxstay_email', email);
   if (name) localStorage.setItem('luxstay_name', name);
   isMember = true;
+  if (window.posthog) posthog.identify(email, { name: name || undefined });
+  track('member_joined', { method: name ? 'google' : 'email' });
 
   document.getElementById('modal-form-view').style.display = 'none';
   document.getElementById('modal-success').style.display = 'block';
@@ -982,9 +1068,63 @@ function activateMember(email, name) {
   }, 2500);
 }
 
+// ── POSTHOG TRACKING HELPERS ──────────────────────────────────
+function track(event, props) {
+  if (window.posthog && typeof posthog.capture === 'function') {
+    posthog.capture(event, props || {});
+  }
+}
+
+// ── COOKIE CONSENT ────────────────────────────────────────────
+(function initCookieConsent() {
+  var consent = localStorage.getItem('luxstay_cookie_consent');
+  if (consent === null) {
+    // No decision yet — show banner after short delay
+    setTimeout(function() {
+      document.getElementById('cookie-banner').style.display = 'flex';
+    }, 1200);
+    // Start PostHog in opt-out mode until accepted
+    if (window.posthog) posthog.opt_out_capturing();
+  } else if (consent === 'true') {
+    if (window.posthog) posthog.opt_in_capturing();
+  } else {
+    if (window.posthog) posthog.opt_out_capturing();
+  }
+})();
+
+function cookieChoice(accepted) {
+  localStorage.setItem('luxstay_cookie_consent', accepted ? 'true' : 'false');
+  document.getElementById('cookie-banner').style.display = 'none';
+  if (accepted) {
+    if (window.posthog) posthog.opt_in_capturing();
+    track('cookie_consent_accepted');
+  } else {
+    if (window.posthog) posthog.opt_out_capturing();
+  }
+}
+
+// ── PRIVACY MODAL ─────────────────────────────────────────────
+function openPrivacy()  { document.getElementById('privacy-overlay').classList.add('open'); }
+function closePrivacy() { document.getElementById('privacy-overlay').classList.remove('open'); }
+function closePrivacyOutside(e) { if (e.target.id === 'privacy-overlay') closePrivacy(); }
+
+// ── ANALYTICS INSTRUMENTATION ─────────────────────────────────
+// Wrap doSearch to fire search event
+const _origDoSearch = doSearch;
+function doSearch() {
+  track('hotel_search', {
+    city: document.getElementById('city-select').value,
+    checkin: document.getElementById('checkin').value,
+    checkout: document.getElementById('checkout').value,
+    guests: document.getElementById('guests').value
+  });
+  _origDoSearch();
+}
+
 // ── INIT ──────────────────────────────────────────────────────
 updateMemberUI();
 renderHotels('London', defaultIn, defaultOut);
+track('page_view', { page: 'home' });
 </script>
 
 </body>
