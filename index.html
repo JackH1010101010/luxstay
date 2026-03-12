@@ -844,6 +844,7 @@ function updateCardPrice(h, data) {
   // netCost already includes our margin (passed to the rates API).
   // ssp is LiteAPI's suggested selling price == Booking.com reference rate.
   const memberPrice = netCost;
+  const displaySsp  = ssp || netCost;
   const saving      = ssp && memberPrice ? Math.round((1 - memberPrice/ssp)*100) : 0;
   const fmt = n => '£' + parseFloat(n).toLocaleString('en-GB', {minimumFractionDigits:0, maximumFractionDigits:0});
 
