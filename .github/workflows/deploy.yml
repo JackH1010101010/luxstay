@@ -32,11 +32,10 @@ jobs:
           SITE_ID: 5936d2df-a89d-4554-a5eb-1a87078450fe
         run: |
           if [ -n "$LITEAPI_KEY" ]; then
-            curl -s -X POST \
-              "https://api.netlify.com/api/v1/sites/${SITE_ID}/env" \
-              -H "Authorization: Bearer ${NETLIFY_AUTH_TOKEN}" \
-              -H "Content-Type: application/json" \
-              -d "[{\"key\":\"LITEAPI_KEY\",\"values\":[{\"value\":\"${LITEAPI_KEY}\",\"context\":\"all\"}]}]"
+            netlify env:set LITEAPI_KEY "$LITEAPI_KEY" \
+              --site="$SITE_ID" \
+              --context production \
+              --auth="$NETLIFY_AUTH_TOKEN"
             echo "✓ LITEAPI_KEY set on Netlify site"
           else
             echo "⚠ LITEAPI_KEY not set"
