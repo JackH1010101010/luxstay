@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LuxStay — Member-Only Luxury Hotel Rates</title>
+  <meta name="google-site-verification" content="w1CNob_6FpyZqs14nLJK6e7Dar14Uo4nfgC6PaRUzCM" />
   <meta name="description" content="5-star hotels at member-only rates. Save 10–30% on London, Dubai and Bangkok luxury hotels. No minimum stay. Live pricing." />
 
   <!-- PostHog Analytics — key injected at build time via POSTHOG_PROJECT_KEY env var -->
@@ -603,7 +604,7 @@ async function sendBookingConfirmation(bk) {
 // ── TEST MODE ─────────────────────────────────────────────────
 // Set to true to simulate the full booking flow without real API calls or charges.
 // Set to false for production use.
-const TEST_MODE = false;
+const TEST_MODE = true;
 // memberPrice = min(net × 1.15,  ssp × 0.92)  — whichever is lower
 function calcMemberPrice(netCost, ssp) {
   if (!netCost) return null;
