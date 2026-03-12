@@ -39,11 +39,12 @@ jobs:
 
       - name: Merge SEO pages into deploy directory
         run: |
-          # Copy generated SEO pages (sitemap, robots, .html pages) into luxstay dir
-          # index.html from the luxstay repo itself takes precedence — copy SEO pages only
-          cp -r lite-stack/sites/luxstay/. luxstay/
-          # Restore luxstay's own index.html (it has the Netlify functions wired in)
-          cd lite-stack && git checkout -- sites/luxstay/index.html 2>/dev/null || true
+          # Copy generated SEO pages (sitemap, robots, SEO .html pages) into luxstay dir.
+          # Explicitly exclude index.html — the luxstay repo's own index.html always wins.
+          find lite-stack/sites/luxstay -maxdepth 1 -name "*.html" ! -name "index.html" \
+            -exec cp {} luxstay/ \;
+          cp lite-stack/sites/luxstay/sitemap.xml luxstay/ 2>/dev/null || true
+          cp lite-stack/sites/luxstay/robots.txt  luxstay/ 2>/dev/null || true
 
       - name: Inject PostHog key
         env:
