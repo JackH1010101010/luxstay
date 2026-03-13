@@ -251,7 +251,7 @@
 <!-- HERO -->
 <section class="hero">
   <p class="hero-eyebrow">5-Star Hotels · Members Save 10–30%</p>
-  <h1>Luxury hotel rates you won't find on Booking.com</h1>
+  <h1>Exclusive member rates on luxury hotels</h1>
   <p class="hero-sub">Member-only pricing on 5-star hotels in London, Dubai and Bangkok. No minimum stay. Rates updated live.</p>
   <div class="search-bar">
     <div class="sf">
@@ -288,7 +288,7 @@
   <!-- MEMBER BANNER -->
   <div class="cug-banner" id="cug-banner">
     <span class="cug-icon">🔒</span>
-    <span class="cug-text" id="cug-text"><strong>Member prices hidden.</strong> Join free to unlock rates 10–30% below Booking.com.</span>
+    <span class="cug-text" id="cug-text"><strong>Member prices hidden.</strong> Join free to unlock exclusive below-retail rates.</span>
     <button class="cug-cta" id="cug-btn" onclick="openModal()">Join free →</button>
   </div>
 
@@ -325,7 +325,7 @@
       Hotels release a portion of their unsold inventory at <strong>net rates</strong> — below their public retail price — through Closed User Group (CUG) channels. These rates are legally restricted: they cannot be shown on public pages. They are only available to verified members of gated platforms.
     </p>
     <p>
-      LuxStay operates as a CUG platform. When you join, you gain access to net rates on 5-star hotels that are <strong>10–30% below what Booking.com, Expedia, and Hotels.com show publicly</strong>. The same hotel, same room, same dates — just a better price because you're accessing it through a member channel.
+      LuxStay operates as a CUG platform. When you join, you gain access to net rates on 5-star hotels that are <strong>below the public retail price</strong>. The same hotel, same room, same dates — just a better price because you're accessing it through a member channel.
     </p>
     <p>
       Last-minute availability is highest from <strong>Wednesday onwards</strong> as hotels release unsold rooms for the upcoming weekend. This is when the deepest discounts appear.
@@ -341,7 +341,7 @@
       <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
         How much do members actually save? <span class="chevron">▼</span>
       </div>
-      <div class="faq-a">Members save between 10% and 30% compared to Booking.com public prices on the same hotels and dates. On a £300/night room that's £30–£90 back in your pocket. Savings vary by hotel, date, and availability — the best deals appear last-minute (Wednesday–Thursday for the weekend).</div>
+      <div class="faq-a">Members save between 10% and 30% compared to public retail prices on the same hotels and dates. On a £300/night room that's £30–£90 back in your pocket. Savings vary by hotel, date, and availability — the best deals appear last-minute (Wednesday–Thursday for the weekend).</div>
     </div>
     <div class="faq-item">
       <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
@@ -437,7 +437,7 @@
 
     <div id="modal-form-view">
       <h2>Join LuxStay — it's free</h2>
-      <p class="modal-sub">Unlock member-only hotel rates 10–30% below Booking.com. Takes 10 seconds.</p>
+      <p class="modal-sub">Unlock member-only hotel rates below retail. Takes 10 seconds.</p>
       <div class="modal-perks">
         <div class="perk"><span class="perk-icon">🔓</span><span>Instant access to below-retail rates</span></div>
         <div class="perk"><span class="perk-icon">💰</span><span>Save £20–£90 per night on 5-star hotels</span></div>
@@ -482,7 +482,7 @@
     <div class="modal-success" id="modal-success">
       <div class="tick">✅</div>
       <h3>You're in!</h3>
-      <p>Member rates are now unlocked. Refresh prices to see your savings vs Booking.com.</p>
+      <p>Member rates are now unlocked. Refresh prices to see your exclusive member pricing.</p>
     </div>
   </div>
 </div>
@@ -542,7 +542,7 @@
 // ── CONFIG ────────────────────────────────────────────────────
 const API_BASE = '/.netlify/functions/liteapi'; // server-side proxy — key never in browser
 const MARKUP      = 0.15;  // target markup above net cost
-const MIN_SAVING  = 0.08;  // members always save at least 8% vs Booking.com
+const MIN_SAVING  = 0.08;  // members always save at least 8% vs retail
 
 // ── EmailJS — booking confirmation emails ─────────────────────
 // Setup (5 min): https://www.emailjs.com/
@@ -672,7 +672,7 @@ function updateMemberUI() {
   if (isMember) {
     banner.classList.add('is-member');
     bannerText.classList.add('is-member');
-    bannerText.innerHTML = '<strong>Member rates unlocked.</strong> You\'re seeing below-retail prices not visible on Booking.com.';
+    bannerText.innerHTML = '<strong>Member rates unlocked.</strong> You\'re seeing exclusive below-retail member pricing.';
     bannerBtn.textContent = '✓ Active';
     bannerBtn.style.background = 'var(--green)';
     bannerBtn.style.cursor = 'default';
@@ -849,7 +849,7 @@ function updateCardPrice(h, data) {
 
   const { netCost, ssp } = data;
   // netCost already includes our margin (passed to the rates API).
-  // ssp is LiteAPI's suggested selling price == Booking.com reference rate.
+  // ssp is LiteAPI's suggested selling price (public retail rate).
   const memberPrice = netCost;
   const displaySsp  = ssp || netCost;
   const saving      = ssp && memberPrice ? Math.round((1 - memberPrice/ssp)*100) : 0;
@@ -858,9 +858,9 @@ function updateCardPrice(h, data) {
   if (isMember && memberPrice) {
     priceEl.innerHTML = `
       <div class="price-label">Member rate / night</div>
-      ${ssp ? `<div class="price-was">Booking.com: ${fmt(ssp)}</div>` : ''}
+      ${ssp ? `<div class="price-was">Retail: ${fmt(ssp)}</div>` : ''}
       <div class="price-main member">${fmt(memberPrice)} <span class="price-per">/ night</span></div>
-      ${saving > 0 ? `<span class="saving-badge">Save ${saving}% vs Booking.com</span>` : ''}
+      ${saving > 0 ? `<span class="saving-badge">${saving}% off</span>` : ''}
     `;
     btnEl.innerHTML = `<button class="btn-book" onclick="bookHotel('${h.id}','${h.name}')">Book now</button>`;
   } else {
