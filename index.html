@@ -1232,17 +1232,18 @@ function closePrivacy() { document.getElementById('privacy-overlay').classList.r
 function closePrivacyOutside(e) { if (e.target.id === 'privacy-overlay') closePrivacy(); }
 
 // ── ANALYTICS INSTRUMENTATION ─────────────────────────────────
-// Wrap doSearch to fire search event
-const _origDoSearch = doSearch;
-function doSearch() {
-  track('hotel_search', {
-    city: document.getElementById('city-select').value,
-    checkin: document.getElementById('checkin').value,
-    checkout: document.getElementById('checkout').value,
-    guests: document.getElementById('guests').value
-  });
-  _origDoSearch();
-}
+// Wrap doSearch to fire search event (IIFE to capture original before reassignment)
+doSearch = (function(orig) {
+  return function doSearch() {
+    track('hotel_search', {
+      city: document.getElementById('city-select').value,
+      checkin: document.getElementById('checkin').value,
+      checkout: document.getElementById('checkout').value,
+      guests: document.getElementById('guests').value
+    });
+    orig();
+  };
+})(doSearch);
 
 // ── INIT ──────────────────────────────────────────────────────
 updateMemberUI();
